@@ -1,5 +1,3 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:flutter/material.dart';
 
 void main() {
@@ -17,16 +15,20 @@ class CalculatorApp extends StatelessWidget {
   }
 }
 
-// ignore: use_key_in_widget_constructors
 class CalculatorScreen extends StatefulWidget {
   @override
   _CalculatorScreenState createState() => _CalculatorScreenState();
 }
 
 class _CalculatorScreenState extends State<CalculatorScreen> {
-  double cafeValor = 0.75;
-  double almocoValor = 1.50;
-  double jantaValor = 1.50;
+  final double cafeValorUnitario = 0.75;
+  final double almocoValorUnitario = 1.50;
+  final double jantaValorUnitario = 1.50;
+
+  int cafeQuantidade = 0;
+  int almocoQuantidade = 0;
+  int jantaQuantidade = 0;
+
   double totalCusto = 0.0;
 
   @override
@@ -40,21 +42,21 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: <Widget>[
-            RefeicaoCard("Café (0,75 unidade)", cafeValor, (int count) {
+            RefeicaoCard("Café (0,75 unidade)", cafeQuantidade, (int count) {
               setState(() {
-                cafeValor = 0.75 * count;
+                cafeQuantidade = count;
                 updateTotal();
               });
             }),
-            RefeicaoCard("Almoço (1,50 unidade)", almocoValor, (int count) {
+            RefeicaoCard("Almoço (1,50 unidade)", almocoQuantidade, (int count) {
               setState(() {
-                almocoValor = 1.50 * count;
+                almocoQuantidade = count;
                 updateTotal();
               });
             }),
-            RefeicaoCard("Janta (1,50 unidade)", jantaValor, (int count) {
+            RefeicaoCard("Janta (1,50 unidade)", jantaQuantidade, (int count) {
               setState(() {
-                jantaValor = 1.50 * count;
+                jantaQuantidade = count;
                 updateTotal();
               });
             }),
@@ -71,17 +73,19 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
 
   void updateTotal() {
     setState(() {
-      totalCusto = cafeValor + almocoValor + jantaValor;
+      totalCusto = (cafeQuantidade * cafeValorUnitario) +
+          (almocoQuantidade * almocoValorUnitario) +
+          (jantaQuantidade * jantaValorUnitario);
     });
   }
 }
 
 class RefeicaoCard extends StatefulWidget {
   final String refeicaoNome;
-  final double refeicaoValor;
+  final int refeicaoQuantidade;
   final Function(int) onCountChanged;
 
-  const RefeicaoCard(this.refeicaoNome, this.refeicaoValor, this.onCountChanged,
+  const RefeicaoCard(this.refeicaoNome, this.refeicaoQuantidade, this.onCountChanged,
       {super.key});
 
   @override
@@ -89,7 +93,13 @@ class RefeicaoCard extends StatefulWidget {
 }
 
 class _RefeicaoCardState extends State<RefeicaoCard> {
-  int refeicaoCount = 0;
+  late int refeicaoCount;
+
+  @override
+  void initState() {
+    super.initState();
+    refeicaoCount = widget.refeicaoQuantidade;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -146,3 +156,4 @@ class _RefeicaoCardState extends State<RefeicaoCard> {
     );
   }
 }
+  
