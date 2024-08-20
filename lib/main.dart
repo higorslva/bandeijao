@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'payment_screen.dart'; // Certifique-se de ajustar o caminho conforme a estrutura do seu projeto
 
 void main() {
   runApp(const CalculatorApp());
@@ -10,7 +11,49 @@ class CalculatorApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: CalculatorScreen(),
+      home: HomeScreen(),
+    );
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Tela Inicial'),
+        backgroundColor: Colors.blue,
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CalculatorScreen()),
+                );
+              },
+              child: const Text('Comprar Refeição'),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                // Implementar navegação para a tela de consulta de refeição
+              },
+              child: const Text('Consultar Refeição'),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                // Implementar navegação para a tela de histórico de compras
+              },
+              child: const Text('Histórico de Compras'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -48,7 +91,8 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                 updateTotal();
               });
             }),
-            RefeicaoCard("Almoço (1,50 unidade)", almocoQuantidade, (int count) {
+            RefeicaoCard("Almoço (1,50 unidade)", almocoQuantidade,
+                (int count) {
               setState(() {
                 almocoQuantidade = count;
                 updateTotal();
@@ -64,6 +108,19 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
               'Total: R\$ ${totalCusto.toStringAsFixed(2)}',
               style:
                   const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        PaymentScreen(totalAmount: totalCusto),
+                  ),
+                );
+              },
+              child: const Text('Ir para Pagamento'),
             ),
           ],
         ),
@@ -85,7 +142,8 @@ class RefeicaoCard extends StatefulWidget {
   final int refeicaoQuantidade;
   final Function(int) onCountChanged;
 
-  const RefeicaoCard(this.refeicaoNome, this.refeicaoQuantidade, this.onCountChanged,
+  const RefeicaoCard(
+      this.refeicaoNome, this.refeicaoQuantidade, this.onCountChanged,
       {super.key});
 
   @override
@@ -156,4 +214,3 @@ class _RefeicaoCardState extends State<RefeicaoCard> {
     );
   }
 }
-  
