@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'payment_screen.dart'; // Certifique-se de ajustar o caminho conforme a estrutura do seu projeto
+import 'package:url_launcher/url_launcher.dart';
+import 'payment_screen.dart'; 
 
 void main() {
   runApp(const CalculatorApp());
@@ -16,13 +17,47 @@ class CalculatorApp extends StatelessWidget {
   }
 }
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  bool _isLoggedIn = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Tela Inicial'),
         backgroundColor: Colors.blue,
+      ),
+      drawer: Drawer(
+        child: Column(
+          children: <Widget>[
+            UserAccountsDrawerHeader(
+              accountName: Text(_isLoggedIn ? 'Olá doidão' : 'Visitante'),
+              accountEmail: _isLoggedIn ? null : Text('Faça login para acessar'),
+              currentAccountPicture: CircleAvatar(
+                backgroundColor: Colors.grey[300],
+                child: Icon(Icons.person, size: 50),
+              ),
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+            ),
+            ListTile(
+              title: const Text('Login'),
+              onTap: () {
+                if (!_isLoggedIn) {
+                  Navigator.of(context).pop(); // Fecha o drawer antes de mostrar o diálogo de login
+                  _showLoginDialog();
+                }
+              },
+            ),
+            // Outros itens do menu podem ser adicionados aqui
+          ],
+        ),
       ),
       body: Center(
         child: Column(
@@ -39,8 +74,13 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                // Implementar navegação para a tela de consulta de refeição
+              onPressed: () async {
+                const url = 'https://www2.unifap.br/dace/restaurante-universitario/cardapio-do-mes';
+                if (await canLaunch(url)) {
+                  await launch(url);
+                } else {
+                  throw 'Não foi possível abrir o link $url';
+                }
               },
               child: const Text('Consultar Refeição'),
             ),
@@ -54,6 +94,61 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  void _showLoginDialog() {
+    final TextEditingController matriculaController = TextEditingController();
+    final TextEditingController senhaController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Login'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              TextField(
+                controller: matriculaController,
+                decoration: const InputDecoration(labelText: 'Número de Matrícula'),
+                keyboardType: TextInputType.number,
+              ),
+              TextField(
+                controller: senhaController,
+                decoration: const InputDecoration(labelText: 'Senha'),
+                obscureText: true,
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                String matricula = matriculaController.text;
+                String senha = senhaController.text;
+
+                if (matricula == '123456' && senha == '1234') {
+                  setState(() {
+                    _isLoggedIn = true;
+                  });
+                  Navigator.of(context).pop();
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Número de matrícula ou senha inválidos')),
+                  );
+                }
+              },
+              child: const Text('Entrar'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancelar'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
