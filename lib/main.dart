@@ -17,6 +17,8 @@ class CalculatorApp extends StatelessWidget {
   }
 }
 
+List<String> compras = [];
+
 class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -87,10 +89,14 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // Implementar navegação para a tela de histórico de compras
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HistoricoComprasScreen(compras: compras)),
+                );
               },
               child: const Text('Histórico de Compras'),
-            ),
+            )
+
           ],
         ),
       ),
@@ -207,16 +213,16 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        PaymentScreen(totalAmount: totalCusto),
-                  ),
-                );
+              setState(() {
+                compras.add('Café: $cafeQuantidade, Almoço: $almocoQuantidade, Janta: $jantaQuantidade, Total: R\$ ${totalCusto.toStringAsFixed(2)}');
+              });
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => PaymentScreen(totalAmount: totalCusto)),
+              );
               },
-              child: const Text('Ir para Pagamento'),
-            ),
+            child: const Text('Ir para Pagamento'),
+            )
           ],
         ),
       ),
@@ -244,6 +250,35 @@ class RefeicaoCard extends StatefulWidget {
   @override
   _RefeicaoCardState createState() => _RefeicaoCardState();
 }
+
+class HistoricoComprasScreen extends StatelessWidget {
+  final List<String> compras;
+
+  HistoricoComprasScreen({required this.compras});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Histórico de Compras'),
+        backgroundColor: Colors.blue,
+      ),
+      body: compras.isEmpty
+          ? const Center(
+              child: Text('Nenhuma compra feita nesta sessão'),
+            )
+          : ListView.builder(
+              itemCount: compras.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(compras[index]),
+                );
+              },
+            ),
+    );
+  }
+}
+
 
 class _RefeicaoCardState extends State<RefeicaoCard> {
   late int refeicaoCount;
