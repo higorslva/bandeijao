@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'dart:math';
+
 
 class PaymentScreen extends StatefulWidget {
   final double totalAmount;
@@ -203,8 +205,15 @@ void _processPayment() {
 
 class PaymentConfirmationScreen extends StatelessWidget {
   final double totalPaid;
+  final int codigoVerificacao;
 
-  const PaymentConfirmationScreen({super.key, required this.totalPaid});
+  PaymentConfirmationScreen({super.key, required this.totalPaid})
+      : codigoVerificacao = _gerarCodigoVerificacao(); // Gera o código aqui
+
+  static int _gerarCodigoVerificacao() {
+    final random = Random();
+    return 100000 + random.nextInt(900000); // Gera um número entre 100000 e 999999
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -245,10 +254,10 @@ class PaymentConfirmationScreen extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               Text(
-                'Código de verificação: #123456',
+                'Código de verificação: #$codigoVerificacao',
                 style: const TextStyle(fontSize: 18.0),
                 textAlign: TextAlign.center,
-              ),  
+              ),
               const SizedBox(height: 40),
               ElevatedButton(
                 onPressed: () {
