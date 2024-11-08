@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'payment_screen.dart'; 
+import 'payment_screen.dart';
+
+import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'payment_screen.dart';
 
 void main() {
   runApp(const CalculatorApp());
@@ -12,7 +16,60 @@ class CalculatorApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: HomeScreen(),
+      home: LoginScreen(), // Define a LoginScreen como a tela inicial
+    );
+  }
+}
+
+class LoginScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final TextEditingController matriculaController = TextEditingController();
+    final TextEditingController senhaController = TextEditingController();
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Login')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            TextField(
+              controller: matriculaController,
+              decoration:
+                  const InputDecoration(labelText: 'Número de Matrícula'),
+              keyboardType: TextInputType.number,
+            ),
+            TextField(
+              controller: senhaController,
+              decoration: const InputDecoration(labelText: 'Senha'),
+              obscureText: true,
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                String matricula = matriculaController.text;
+                String senha = senhaController.text;
+
+                if (matricula == '123456' && senha == '1234') {
+                  // Navega para a HomeScreen após login bem-sucedido
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomeScreen()),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content:
+                            Text('Número de matrícula ou senha inválidos')),
+                  );
+                }
+              },
+              child: const Text('Entrar'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -39,7 +96,8 @@ class _HomeScreenState extends State<HomeScreen> {
           children: <Widget>[
             UserAccountsDrawerHeader(
               accountName: Text(_isLoggedIn ? 'Olá doidão' : 'Visitante'),
-              accountEmail: _isLoggedIn ? null : Text('Faça login para acessar'),
+              accountEmail:
+                  _isLoggedIn ? null : Text('Faça login para acessar'),
               currentAccountPicture: CircleAvatar(
                 backgroundColor: Colors.grey[300],
                 child: Icon(Icons.person, size: 50),
@@ -52,7 +110,8 @@ class _HomeScreenState extends State<HomeScreen> {
               title: const Text('Login'),
               onTap: () {
                 if (!_isLoggedIn) {
-                  Navigator.of(context).pop(); // Fecha o drawer antes de mostrar o diálogo de login
+                  Navigator.of(context)
+                      .pop(); // Fecha o drawer antes de mostrar o diálogo de login
                   _showLoginDialog();
                 }
               },
@@ -77,7 +136,8 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-                const url = 'https://www2.unifap.br/dace/restaurante-universitario/cardapio-do-mes';
+                const url =
+                    'https://www2.unifap.br/dace/restaurante-universitario/cardapio-do-mes';
                 if (await canLaunch(url)) {
                   await launch(url);
                 } else {
@@ -91,12 +151,13 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => HistoricoComprasScreen(compras: compras)),
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          HistoricoComprasScreen(compras: compras)),
                 );
               },
               child: const Text('Histórico de Compras'),
             )
-
           ],
         ),
       ),
@@ -117,7 +178,8 @@ class _HomeScreenState extends State<HomeScreen> {
             children: <Widget>[
               TextField(
                 controller: matriculaController,
-                decoration: const InputDecoration(labelText: 'Número de Matrícula'),
+                decoration:
+                    const InputDecoration(labelText: 'Número de Matrícula'),
                 keyboardType: TextInputType.number,
               ),
               TextField(
@@ -140,7 +202,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.of(context).pop();
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Número de matrícula ou senha inválidos')),
+                    const SnackBar(
+                        content:
+                            Text('Número de matrícula ou senha inválidos')),
                   );
                 }
               },
@@ -213,15 +277,18 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-              setState(() {
-                compras.add('Café: $cafeQuantidade, Almoço: $almocoQuantidade, Janta: $jantaQuantidade, Total: R\$ ${totalCusto.toStringAsFixed(2)}');
-              });
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => PaymentScreen(totalAmount: totalCusto)),
-              );
+                setState(() {
+                  compras.add(
+                      'Café: $cafeQuantidade, Almoço: $almocoQuantidade, Janta: $jantaQuantidade, Total: R\$ ${totalCusto.toStringAsFixed(2)}');
+                });
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          PaymentScreen(totalAmount: totalCusto)),
+                );
               },
-            child: const Text('Ir para Pagamento'),
+              child: const Text('Ir para Pagamento'),
             )
           ],
         ),
@@ -278,7 +345,6 @@ class HistoricoComprasScreen extends StatelessWidget {
     );
   }
 }
-
 
 class _RefeicaoCardState extends State<RefeicaoCard> {
   late int refeicaoCount;
